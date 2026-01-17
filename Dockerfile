@@ -9,7 +9,7 @@ WORKDIR /src
 RUN apk add --no-cache git
 
 # Clone the repo and checkout the specific tag
-RUN git clone --depth 1 --branch $FLATNOTES_VERSION https://github.com/dullage/flatnotes.git . \
+RUN git clone --depth 1 --branch v$FLATNOTES_VERSION https://github.com/dullage/flatnotes.git . \
     && test -d server \
     && test -d client
 
