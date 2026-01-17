@@ -3,7 +3,7 @@
 # ----------------------------
 FROM alpine:3.23 AS source
 
-ARG FLATNOTES_VERSION=v5.5.4
+ARG FLATNOTES_VERSION=5.5.4
 WORKDIR /src
 
 RUN apk add --no-cache git
