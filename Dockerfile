@@ -33,9 +33,7 @@ FROM python:3.14-alpine AS backend-builder
 
 WORKDIR /build
 COPY --from=source /src/server ./server
-COPY --from=source /src/pyproject.toml ./pyproject.toml
-COPY --from=source /src/poetry.lock ./poetry.lock
-RUN pip install --prefix=/install --no-cache-dir .
+RUN pip install --prefix=/install --no-cache-dir ./server
 
 # ----------------------------
 # Runtime image (distroless)
