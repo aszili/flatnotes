@@ -3,14 +3,14 @@
 # ----------------------------
 FROM alpine:3.23 AS source
 
-ARG FLATNOTES_VERSION=v5.5.4
+ARG FLATNOTES_VERSION=5.5.4
 WORKDIR /src
 
 RUN apk add --no-cache curl tar
 
 RUN echo "Downloading version: $FLATNOTES_VERSION"
 
-RUN curl -fsSL "https://github.com/dullage/flatnotes/archive/refs/tags/${FLATNOTES_VERSION}.tar.gz" \
+RUN curl -fsSL "https://github.com/dullage/flatnotes/archive/refs/tags/v${FLATNOTES_VERSION}.tar.gz" \
     -o flatnotes.tar.gz \
  && tar -xzf flatnotes.tar.gz --strip-components=1 \
  && rm flatnotes.tar.gz \
