@@ -23,7 +23,7 @@ RUN curl -fsSL "https://github.com/dullage/flatnotes/archive/refs/tags/${FLATNOT
 FROM node:25-alpine AS frontend-builder
 
 WORKDIR /build
-COPY client ./client
+COPY --from=source /src/client ./client
 RUN cd client && npm ci && npm run build
 
 # ----------------------------
@@ -32,8 +32,9 @@ RUN cd client && npm ci && npm run build
 FROM python:3.14-alpine AS backend-builder
 
 WORKDIR /build
-COPY server ./server
-COPY pyproject.toml poetry.lock ./
+COPY --from=source /src/server ./server
+COPY --from=source /src/pyproject.toml ./pyproject.toml
+COPY --from=source /src/poetry.lock ./poetry.lock
 RUN pip install --prefix=/install --no-cache-dir .
 
 # ----------------------------
