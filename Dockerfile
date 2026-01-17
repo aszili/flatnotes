@@ -18,10 +18,10 @@ FROM node:25-alpine AS frontend-builder
 WORKDIR /build
 
 # Copy frontend source from previous stage
-COPY --from=source /src/client ./client
+COPY --from=source /src ./
 
 # Build frontend (dist folder)
-RUN cd client && npm install && npm run build
+RUN npm install && npm run build
 
 # ----------------------------
 # Backend build stage
