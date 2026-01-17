@@ -8,6 +8,8 @@ WORKDIR /src
 
 RUN apk add --no-cache curl tar
 
+RUN echo "Downloading version: $FLATNOTES_VERSION"
+
 RUN curl -fsSL "https://github.com/dullage/flatnotes/archive/refs/tags/${FLATNOTES_VERSION}.tar.gz" \
     -o flatnotes.tar.gz \
  && tar -xzf flatnotes.tar.gz --strip-components=1 \
