@@ -24,8 +24,7 @@ FROM node:25-alpine AS frontend-builder
 
 WORKDIR /build
 COPY --from=source /src/client ./client
-RUN cd client && npm ci && npm run build
-
+RUN cd client && npm install && npm run build
 # ----------------------------
 # Backend build stage
 # ----------------------------
