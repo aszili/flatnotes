@@ -1,0 +1,43 @@
+name: Docker Build & Push
+
+on:
+  push:
+    tags:
+      - "*"
+  schedule:
+    - cron: "30 10 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Build the image even if it already exists
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    outputs:
+      TARGET_IMAGE_TAG: ${{ steps.flatnotes-version.outputs.release }}
+      FLATNOTES_VERSION: ${{ steps.prepare.outputs.flatnotes-version }}
+    steps:
+      - name: Get latest Flatnotes version
+        id: flatnotes-version
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
+        with:
+          owner: dullage
+          repo: flatnotes
+          token: ${{ secrets.GITHUB_TOKEN }}
+          excludes: prerelease, draft
+
+      - name: Prepare
+        id: prepare
+        run: echo "flatnotes-version=$(echo "${{ steps.flatnotes-version.outputs.release }}"|awk '{print substr($0, 2)}')" >> $GITHUB_OUTPUT
+
+  build:
+    needs: initialize
+    uses: aszili/github-actions/.github/workflows/build-docker-image.yml@main
+    with:
+      target_tag: ${{ needs.initialize.outputs.TARGET_IMAGE_TAG }}
+      build_args: FLATNOTES_VERSION=${{ needs.initialize.outputs.FLATNOTES_VERSION }}
+      force: ${{ contains(inputs.force, 'true') }}
