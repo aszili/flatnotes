@@ -21,7 +21,7 @@ WORKDIR /build
 COPY --from=source /src/client ./client
 
 # Build frontend (dist folder)
-RUN npm install && npm run build
+RUN cd client && npm install && npm run build
 
 # ----------------------------
 # Backend build stage
