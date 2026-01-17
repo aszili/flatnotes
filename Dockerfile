@@ -15,16 +15,8 @@ RUN curl -fsSL "https://github.com/dullage/flatnotes/archive/refs/tags/v${FLATNO
  && tar -xzf flatnotes.tar.gz --strip-components=1 \
  && rm flatnotes.tar.gz \
  && test -d server \
- && test -d client
+ && test -d client/dist
 
-# ----------------------------
-# Frontend build stage
-# ----------------------------
-FROM node:25-alpine AS frontend-builder
-
-WORKDIR /build
-COPY --from=source /src/client ./client
-RUN cd client && npm install && npm run build
 # ----------------------------
 # Backend build stage
 # ----------------------------
@@ -37,14 +29,13 @@ RUN pip install --prefix=/install --no-cache-dir ./server
 # ----------------------------
 # Runtime image (distroless)
 # ----------------------------
-
 FROM gcr.io/distroless/python3-debian12
 
 WORKDIR /opt/flatnotes
 
 COPY --from=backend-builder /install /usr/local
 COPY --from=backend-builder /build/server ./server
-COPY --from=frontend-builder /build/client/dist ./client/dist
+COPY --from=source /src/client/dist ./client/dist
 COPY docker-entrypoint.py /entrypoint.py
 
 ENTRYPOINT ["python", "/entrypoint.py"]
