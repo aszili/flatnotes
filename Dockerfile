@@ -9,7 +9,6 @@ WORKDIR /src
 RUN apk add --no-cache curl tar
 
 RUN curl -fsSL "https://github.com/dullage/flatnotes/archive/refs/tags/${FLATNOTES_VERSION}.tar.gz" \
-                https://github.com/dullage/flatnotes/archive/refs/tags/v5.5.4.tar.gz
     -o flatnotes.tar.gz \
  && tar -xzf flatnotes.tar.gz --strip-components=1 \
  && rm flatnotes.tar.gz \
