@@ -26,7 +26,7 @@ RUN cd client && npm ci && npm run build
 # ----------------------------
 # Backend build stage
 # ----------------------------
-FROM python:3.11-alpine AS backend-builder
+FROM python:3.14-alpine AS backend-builder
 
 WORKDIR /build
 COPY server ./server
