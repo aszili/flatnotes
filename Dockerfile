@@ -3,7 +3,7 @@ ARG FLATNOTES_VERSION=v5.5.4
 # ----------------------------
 # Fetch source
 # ----------------------------
-FROM alpine:3.19 AS source
+FROM alpine:3.23 AS source
 
 ARG FLATNOTES_VERSION
 WORKDIR /src
