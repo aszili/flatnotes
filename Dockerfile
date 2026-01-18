@@ -37,7 +37,8 @@ RUN pip install --no-cache-dir \
         python-jose \
         sqlalchemy \
         aiosqlite \
-        jinja2
+        jinja2 \
+        whoosh
 
 # Copy backend source
 COPY --from=source /src/server ./server
