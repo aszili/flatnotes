@@ -1,16 +1,14 @@
-# ----------------------------
-# Fetch source from git
-# ----------------------------
 FROM debian:bookworm-slim AS source
 
 ARG FLATNOTES_VERSION=5.5.4
 WORKDIR /src
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        git curl unzip ca-certificates \
+        git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --branch v${FLATNOTES_VERSION} --depth 1 https://github.com/dullage/flatnotes.git .
+
 
 # ----------------------------
 # Frontend build stage
@@ -18,11 +16,8 @@ RUN git clone --branch v${FLATNOTES_VERSION} --depth 1 https://github.com/dullag
 FROM node:25-bullseye-slim AS frontend-builder
 
 WORKDIR /build
-
-# Copy frontend source from previous stage
 COPY --from=source /src ./
 
-# Build frontend (dist folder)
 RUN npm install && npm run build
 
 # ----------------------------
@@ -32,9 +27,21 @@ FROM python:3.14-slim AS backend-builder
 
 WORKDIR /build
 
-RUN pip install --no-cache-dir fastapi uvicorn pydantic python-multipart python-jose sqlalchemy aiosqlite jinja2
+# Install Python deps into a relocatable directory
+RUN pip install --no-cache-dir \
+        --target /opt/python \
+        fastapi \
+        uvicorn \
+        pydantic \
+        python-multipart \
+        python-jose \
+        sqlalchemy \
+        aiosqlite \
+        jinja2
 
+# Copy backend source
 COPY --from=source /src/server ./server
+
 
 # ----------------------------
 # Runtime image (distroless)
@@ -43,10 +50,16 @@ FROM gcr.io/distroless/python3-debian12
 
 WORKDIR /opt/flatnotes
 
-COPY --from=backend-builder /usr/local /usr/local
+# Python dependencies
+COPY --from=backend-builder /opt/python /opt/python
+
+# Application code
 COPY --from=backend-builder /build/server ./server
 COPY --from=frontend-builder /build/client/dist ./client/dist
 COPY docker-entrypoint.py /entrypoint.py
+
+# Make Python see /opt/python
+ENV PYTHONPATH=/opt/python
 
 ENV FLATNOTES_HOST=0.0.0.0
 ENV FLATNOTES_PORT=8080
