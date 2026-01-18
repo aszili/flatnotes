@@ -31,8 +31,7 @@ FROM python:3.14-alpine AS backend-builder
 WORKDIR /build
 COPY --from=source /src/server ./server
 
-# Install backend into /install for later copying
-RUN pip install --prefix=/install --no-cache-dir ./server
+RUN pip install --prefix=/install --no-cache-dir fastapi uvicorn pydantic python-multipart python-jose sqlalchemy aiosqlite jinja2
 
 # ----------------------------
 # Runtime image (distroless)
@@ -45,5 +44,7 @@ COPY --from=backend-builder /install /usr/local
 COPY --from=backend-builder /build/server ./server
 COPY --from=frontend-builder /build/client/dist ./client/dist
 COPY docker-entrypoint.py /entrypoint.py
+
+VOLUME ["/opt/flatnotes/data", "/opt/flatnotes/tmp"] 
 
 ENTRYPOINT ["python", "/entrypoint.py"]
