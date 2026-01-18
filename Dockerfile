@@ -41,9 +41,7 @@ FROM gcr.io/distroless/python3-debian12
 
 WORKDIR /opt/flatnotes
 
-COPY --from=backend-builder /usr/lib/python3.14 /usr/lib/python3.14
-COPY --from=backend-builder /usr/bin/python /usr/bin/python
-
+COPY --from=backend-builder /install /usr/local
 COPY --from=backend-builder /build/server ./server
 COPY --from=frontend-builder /build/client/dist ./client/dist
 COPY docker-entrypoint.py /entrypoint.py
