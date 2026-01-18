@@ -1,12 +1,14 @@
 # ----------------------------
 # Fetch source from git
 # ----------------------------
-FROM alpine:3.23 AS source
+FROM debian:bookworm-slim AS source
 
 ARG FLATNOTES_VERSION=5.5.4
 WORKDIR /src
 
-RUN apk add --no-cache git curl unzip nodejs npm python3 py3-pip build-base
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git curl unzip ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --branch v${FLATNOTES_VERSION} --depth 1 https://github.com/dullage/flatnotes.git .
 
@@ -26,7 +28,7 @@ RUN npm install && npm run build
 # ----------------------------
 # Backend build stage
 # ----------------------------
-FROM python:3.14-alpine AS backend-builder
+FROM python:3.14-slim-bullseye AS backend-builder
 
 WORKDIR /build
 
