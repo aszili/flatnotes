@@ -59,7 +59,7 @@ COPY --from=frontend-builder /build/client/dist ./client/dist
 COPY docker-entrypoint.py /entrypoint.py
 
 # Make Python see /opt/python
-ENV PYTHONPATH=/opt/python
+ENV PYTHONPATH=/opt/python:/opt/flatnotes
 
 ENV FLATNOTES_HOST=0.0.0.0
 ENV FLATNOTES_PORT=8080
