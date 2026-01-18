@@ -15,7 +15,7 @@ RUN git clone --branch v${FLATNOTES_VERSION} --depth 1 https://github.com/dullag
 # ----------------------------
 # Frontend build stage
 # ----------------------------
-FROM node:25-alpine AS frontend-builder
+FROM node:25-bullseye-slim AS frontend-builder
 
 WORKDIR /build
 
@@ -28,7 +28,7 @@ RUN npm install && npm run build
 # ----------------------------
 # Backend build stage
 # ----------------------------
-FROM python:3.14-slim-bullseye AS backend-builder
+FROM python:3.14-slim AS backend-builder
 
 WORKDIR /build
 
@@ -52,4 +52,4 @@ ENV FLATNOTES_HOST=0.0.0.0
 ENV FLATNOTES_PORT=8080
 ENV FLATNOTES_STATE_DIR=/state
 
-ENTRYPOINT ["python", "/entrypoint.py"]
+ENTRYPOINT ["python3", "/entrypoint.py"]
