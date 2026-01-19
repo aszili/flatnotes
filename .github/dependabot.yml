@@ -10,5 +10,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+    ignore:
+      - dependency-name: "python"
+        versions: ["3.11", "3.11.*"]
     assignees:
       - aszili
