@@ -12,6 +12,6 @@ updates:
       interval: daily
     ignore:
       - dependency-name: "python"
-        versions: ["3.11", "3.11.*"]
+        versions: ["3.11", "3.11-slim"]
     assignees:
       - aszili
