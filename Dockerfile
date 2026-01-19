@@ -23,7 +23,7 @@ RUN npm install && npm run build
 # ----------------------------
 # Backend build stage
 # ----------------------------
-FROM python:3.14-slim AS backend-builder
+FROM python:3.11-slim AS backend-builder
 
 WORKDIR /build
 
