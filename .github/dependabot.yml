@@ -6,12 +6,17 @@ updates:
       interval: daily
     assignees:
       - aszili
+
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: daily
     ignore:
       - dependency-name: "python"
-        versions: ["3.11", "3.11-slim"]
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
     assignees:
       - aszili
+
