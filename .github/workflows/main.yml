@@ -4,9 +4,6 @@ on:
   push:
     tags:
       - "*"
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       force:
@@ -22,7 +19,6 @@ jobs:
     outputs:
       TARGET_IMAGE_TAG: ${{ steps.flatnotes_version.outputs.version }}
       FLATNOTES_VERSION: ${{ steps.prepare.outputs.flatnotes_version }}
-      IS_DEPENDABOT: ${{ steps.detect.outputs.is_dependabot }}
 
     steps:
       - name: Checkout repo
@@ -40,15 +36,6 @@ jobs:
           VERSION="${{ steps.flatnotes_version.outputs.version }}"
           echo "flatnotes_version=${VERSION#v}" >> $GITHUB_OUTPUT
 
-      - name: Detect Dependabot
-        id: detect
-        run: |
-          if [ "${{ github.actor }}" = "dependabot[bot]" ]; then
-            echo "is_dependabot=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_dependabot=false" >> $GITHUB_OUTPUT
-          fi
-
   build:
     needs: initialize
     uses: aszili/github-actions/.github/workflows/build-docker-image.yml@main
@@ -56,4 +43,3 @@ jobs:
       target_tag: ${{ needs.initialize.outputs.TARGET_IMAGE_TAG }}
       build_args: FLATNOTES_VERSION=${{ needs.initialize.outputs.FLATNOTES_VERSION }}
       force: ${{ contains(inputs.force, 'true') }}
-      push: ${{ needs.initialize.outputs.IS_DEPENDABOT != 'true' }}
