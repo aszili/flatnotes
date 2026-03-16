@@ -18,16 +18,18 @@ on:
 jobs:
   initialize:
     runs-on: ubuntu-latest
+
     outputs:
-      TARGET_IMAGE_TAG: ${{ steps.flatnotes-version.outputs.release }}
-      FLATNOTES_VERSION: ${{ steps.prepare.outputs.flatnotes-version }}
+      TARGET_IMAGE_TAG: ${{ steps.flatnotes_version.outputs.version }}
+      FLATNOTES_VERSION: ${{ steps.prepare.outputs.flatnotes_version }}
       IS_DEPENDABOT: ${{ steps.detect.outputs.is_dependabot }}
 
+    steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Read Flatnotes version from package.json
-        id: flatnotes-version
+        id: flatnotes_version
         run: |
           VERSION=$(jq -r '.dependencies.flatnotes' package.json | cut -d'#' -f2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -35,7 +37,7 @@ jobs:
       - name: Prepare version (remove leading v)
         id: prepare
         run: |
-          VERSION="${{ steps.flatnotes-version.outputs.version }}"
+          VERSION="${{ steps.flatnotes_version.outputs.version }}"
           echo "flatnotes_version=${VERSION#v}" >> $GITHUB_OUTPUT
 
       - name: Detect Dependabot
