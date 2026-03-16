@@ -1,6 +1,6 @@
 FROM debian:bookworm-slim AS source
 
-ARG FLATNOTES_VERSION=5.5.4
+ARG FLATNOTES_VERSION
 WORKDIR /src
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates \

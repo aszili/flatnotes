@@ -4,8 +4,9 @@ on:
   push:
     tags:
       - "*"
-  schedule:
-    - cron: "30 10 * * *"
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       force:
@@ -20,19 +21,31 @@ jobs:
     outputs:
       TARGET_IMAGE_TAG: ${{ steps.flatnotes-version.outputs.release }}
       FLATNOTES_VERSION: ${{ steps.prepare.outputs.flatnotes-version }}
-    steps:
-      - name: Get latest Flatnotes version
-        id: flatnotes-version
-        uses: pozetroninc/github-action-get-latest-release@v0.8.0
-        with:
-          owner: dullage
-          repo: flatnotes
-          token: ${{ secrets.GITHUB_TOKEN }}
-          excludes: prerelease, draft
+      IS_DEPENDABOT: ${{ steps.detect.outputs.is_dependabot }}
 
-      - name: Prepare
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Read Flatnotes version from package.json
+        id: flatnotes-version
+        run: |
+          VERSION=$(jq -r '.dependencies.flatnotes' package.json | cut -d'#' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Prepare version (remove leading v)
         id: prepare
-        run: echo "flatnotes-version=$(echo "${{ steps.flatnotes-version.outputs.release }}"|awk '{print substr($0, 2)}')" >> $GITHUB_OUTPUT
+        run: |
+          VERSION="${{ steps.flatnotes-version.outputs.version }}"
+          echo "flatnotes_version=${VERSION#v}" >> $GITHUB_OUTPUT
+
+      - name: Detect Dependabot
+        id: detect
+        run: |
+          if [ "${{ github.actor }}" = "dependabot[bot]" ]; then
+            echo "is_dependabot=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_dependabot=false" >> $GITHUB_OUTPUT
+          fi
 
   build:
     needs: initialize
@@ -41,3 +54,4 @@ jobs:
       target_tag: ${{ needs.initialize.outputs.TARGET_IMAGE_TAG }}
       build_args: FLATNOTES_VERSION=${{ needs.initialize.outputs.FLATNOTES_VERSION }}
       force: ${{ contains(inputs.force, 'true') }}
+      push: ${{ needs.initialize.outputs.IS_DEPENDABOT != 'true' }}
