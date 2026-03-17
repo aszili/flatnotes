@@ -1,4 +1,3 @@
-[![Latest Release][version-image]][version-url]
 [![Docker Build][gh-actions-image]][gh-actions-url]
 
 # flatnotes
