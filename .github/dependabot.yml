@@ -1,18 +1,19 @@
 version: 2
 
-x-common: &common
-  directory: /
-  schedule:
-    interval: daily
-  assignees:
-    - aszili
-
 updates:
   - package-ecosystem: github-actions
-    <<: *common
+    directory: /
+    schedule:
+      interval: daily
+    assignees:
+      - aszili
 
   - package-ecosystem: docker
-    <<: *common
+    directory: /
+    schedule:
+      interval: daily
+    assignees:
+      - aszili
     ignore:
       - dependency-name: python
         update-types:
@@ -21,4 +22,8 @@ updates:
           - "version-update:semver-patch"
 
   - package-ecosystem: npm
-    <<: *common
+    directory: /
+    schedule:
+      interval: daily
+    assignees:
+      - aszili
