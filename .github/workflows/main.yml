@@ -2,11 +2,13 @@ name: Docker Build & Push
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
+
   pull_request:
     branches:
-      - main      
+      - main
+
   workflow_dispatch:
     inputs:
       force:
@@ -17,32 +19,15 @@ on:
 
 jobs:
   initialize:
-    runs-on: ubuntu-latest
-
-    outputs:
-      TARGET_IMAGE_TAG: ${{ steps.flatnotes_version.outputs.version }}
-      FLATNOTES_VERSION: ${{ steps.prepare.outputs.flatnotes_version }}
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v6
-
-      - name: Read Flatnotes version from package.json
-        id: flatnotes_version
-        run: |
-          VERSION=$(jq -r '.dependencies.flatnotes' package.json | cut -d'#' -f2)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Prepare version (remove leading v)
-        id: prepare
-        run: |
-          VERSION="${{ steps.flatnotes_version.outputs.version }}"
-          echo "flatnotes_version=${VERSION#v}" >> $GITHUB_OUTPUT
+    uses: aszili/github-actions/.github/workflows/prepare-package-version.yml@main
+    with:
+      package_name: flatnotes
+      output_env_var: FLATNOTES_VERSION
 
   build:
     needs: initialize
     uses: aszili/github-actions/.github/workflows/build-docker-image.yml@main
     with:
-      target_tag: ${{ needs.initialize.outputs.TARGET_IMAGE_TAG }}
-      build_args: FLATNOTES_VERSION=${{ needs.initialize.outputs.FLATNOTES_VERSION }}
+      target_tag: ${{ needs.initialize.outputs.version }}
+      build_args: FLATNOTES_VERSION=${{ needs.initialize.outputs.version }}
       force: ${{ contains(inputs.force, 'true') }}

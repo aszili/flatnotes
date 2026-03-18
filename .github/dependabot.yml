@@ -14,7 +14,7 @@ updates:
   - package-ecosystem: docker
     <<: *common
     ignore:
-      - dependency-name: "python"
+      - dependency-name: python
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
