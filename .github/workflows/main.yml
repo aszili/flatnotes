@@ -30,4 +30,4 @@ jobs:
     with:
       target_tag: ${{ needs.initialize.outputs.version }}
       build_args: FLATNOTES_VERSION=${{ needs.initialize.outputs.version }}
-      force: ${{ contains(inputs.force, 'true') }}
+      force: ${{ inputs.force == 'true' }}
