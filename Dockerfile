@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 RUN git clone --branch v${FLATNOTES_VERSION} --depth 1 https://github.com/dullage/flatnotes.git .
-FROM node:25-bullseye-slim AS frontend-builder
+FROM node:26-bullseye-slim AS frontend-builder
 
 WORKDIR /build
 COPY --from=source /src ./
