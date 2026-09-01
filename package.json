@@ -1,6 +1,6 @@
 {
   "private": true,
   "dependencies": {
-    "flatnotes": "github:dullage/flatnotes#v5.5.4"
+    "flatnotes": "github:dullage/flatnotes#v5.5.5"
   }
 }
